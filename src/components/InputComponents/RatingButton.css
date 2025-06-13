@@ -1,0 +1,74 @@
+.rating-button-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rating-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rating-tooltip {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1001;
+}
+
+.rating-tooltip.visible {
+    opacity: 1;
+}
+
+.rating-buttons {
+    position: absolute;
+    display: flex;
+    gap: 4px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(-50%);
+    left: 50%;
+    background: transparent;
+    padding: 0;
+    border-radius: 20px;
+    box-shadow: none;
+    z-index: 1;
+    width: 80px;
+    justify-content: center;
+}
+
+.rating-buttons.visible {
+    opacity: 1;
+    background: white;
+    padding: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.rating-single-button {
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+.rating-buttons.visible .rating-single-button {
+    transform: scale(0.8);
+} 

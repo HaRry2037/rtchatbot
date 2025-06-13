@@ -1,0 +1,24 @@
+.input-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.input-field {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 20px;
+    border: 1px solid #e0e0e0;
+    background: transparent;
+    color: black;
+    font-size: 14px;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #0078ff;
+} 

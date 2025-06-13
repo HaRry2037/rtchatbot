@@ -1,0 +1,30 @@
+@keyframes jump {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.typing-container {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    height: 24px;
+}
+
+.typing-dot {
+    animation: jump 1.2s infinite;
+    font-size: 24px;
+    color: #555;
+    display: inline-block;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+} 

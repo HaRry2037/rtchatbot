@@ -1,0 +1,36 @@
+.message-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.message-container.user {
+    align-items: flex-end;
+}
+
+.message-container.bot {
+    align-items: flex-start;
+}
+
+.message-name {
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.message-bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    color: #000;
+}
+
+.message-bubble.user {
+    background-color: #e6e6fa;
+    align-self: flex-end;
+}
+
+.message-bubble.bot {
+    background-color: #dbefff;
+    align-self: flex-start;
+} 
