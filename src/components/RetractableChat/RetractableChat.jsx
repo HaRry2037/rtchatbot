@@ -1,13 +1,23 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ChatApp from '../ChatApp/ChatApp';
 import BurgerMenu from '../BurgerMenu/BurgerMenu';
 
 const RetractableChat = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const chatRef = useRef();
+    const [messages, setMessages] = useState([]);
 
     const toggleChat = () => {
         setIsExpanded(!isExpanded);
+    };
+
+    const handleEndSession = () => {
+        if (chatRef.current) {
+            chatRef.current.clearMessages();
+            setMessages([
+                { sender: 'bot', text: 'Hello! How can I assist you today', name: 'Support' }
+            ]);
+        }
     };
 
     const handlePopout = () => {
@@ -15,18 +25,62 @@ const RetractableChat = () => {
         const height = 700;
         const left = window.screen.width / 2 - width / 2;
         const top = window.screen.height / 2 - height / 2;
-        
-        window.open(
-            window.location.href,
+
+        const popup = window.open(
+            '',
             'ChatPopout',
             `width=${width},height=${height},left=${left},top=${top}`
         );
+
+        if (!popup) return;
+
+        // Inject minimal HTML and JS into the new window
+        popup.document.write(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <title>Chat Popout</title>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <style>
+                    body { margin: 0; font-family: sans-serif; }
+                    #root { height: 100vh; }
+                </style>
+            </head>
+            <body>
+                <div id="root"></div>
+                <script>
+                    window.opener.postMessage({ type: 'REQUEST_CHAT_DATA' }, '*');
+                    window.addEventListener('message', (event) => {
+                        if (event.data?.type === 'CHAT_DATA') {
+                            window.localStorage.setItem('chatData', JSON.stringify(event.data.payload));
+                            window.location.href = '/popout'; // Navigate to your React route
+                        }
+                    });
+                </script>
+            </body>
+            </html>
+        `);
     };
 
-    const handleEndSession = () => {
-        if (chatRef.current) {
-            chatRef.current.clearMessages();
-        }
+    // Listen for popout window requesting chat data
+    useEffect(() => {
+        const handleMessageRequest = (event) => {
+            if (event.data?.type === 'REQUEST_CHAT_DATA') {
+                event.source?.postMessage({
+                    type: 'CHAT_DATA',
+                    payload: {
+                        messages: messages || []
+                    }
+                }, '*');
+            }
+        };
+        window.addEventListener('message', handleMessageRequest);
+        return () => window.removeEventListener('message', handleMessageRequest);
+    }, [messages]);
+
+    const handleNewMessages = (msgs) => {
+        setMessages(msgs);
     };
 
     return (
@@ -36,7 +90,7 @@ const RetractableChat = () => {
             right: '20px',
             zIndex: 1000
         }}>
-            {isExpanded ? (
+            {isExpanded && (
                 <div style={{
                     position: 'fixed',
                     bottom: '100px',
@@ -62,7 +116,11 @@ const RetractableChat = () => {
                         alignItems: 'center',
                         zIndex: 1000
                     }}>
-                        <BurgerMenu onPopout={handlePopout} onEndSession={handleEndSession} />
+                        <BurgerMenu 
+                            onPopout={handlePopout} 
+                            onEndSession={handleEndSession} 
+                            messages={messages} 
+                        />
                         <button
                             onClick={toggleChat}
                             style={{
@@ -90,9 +148,9 @@ const RetractableChat = () => {
                             </svg>
                         </button>
                     </div>
-                    <ChatApp ref={chatRef} />
+                    <ChatApp ref={chatRef} onMessagesChange={handleNewMessages} />
                 </div>
-            ) : null}
+            )}
             <button
                 onClick={toggleChat}
                 style={{

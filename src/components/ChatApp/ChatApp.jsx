@@ -1,31 +1,38 @@
-import React, {useState, forwardRef, useImperativeHandle} from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import Message from "../message_box/message";
 import InputBox from "../InputBox/InputBox";
 import TypingDots from "../TypingDots/TypingDots";
 import { getResponse } from "../MockResponses/MockResponses";
 
 const ChatApp = forwardRef((props, ref) => {
-    const [messages, setMessages] = useState([
-        {sender: 'bot', text: 'Hello! How can I assist you today', name:'Support'}
-    ]);
+    const [messages, setMessages] = useState(() => {
+        const stored = localStorage.getItem('chatMessages');
+        return stored ? JSON.parse(stored) : [{ sender: 'bot', text: 'Hello! How can I assist you today', name: 'Support' }];
+    });
+
     const [isTyping, setIsTyping] = useState(false);
-    
+
     const userName = '';
+
+    useEffect(() => {
+        localStorage.setItem('chatMessages', JSON.stringify(messages));
+    }, [messages]);
 
     useImperativeHandle(ref, () => ({
         clearMessages: () => {
-            setMessages([
-                {sender: 'bot', text: 'Hello! How can I assist you today', name:'Support'}
-            ]);
+            const defaultMsg = [{ sender: 'bot', text: 'Hello! How can I assist you today', name: 'Support' }];
+            setMessages(defaultMsg);
+            localStorage.setItem('chatMessages', JSON.stringify(defaultMsg));
             setIsTyping(false);
-        }
+        },
+        messages
     }));
 
-    const handleSend = ({text, name}) => {
+    const handleSend = ({ text, name }) => {
         const nameToUse = name?.trim() || 'Guest';
         setMessages((prev) => [
             ...prev,
-            {sender: 'user', text, name: nameToUse}
+            { sender: 'user', text, name: nameToUse }
         ]);
         setIsTyping(true);
         setTimeout(() => {
@@ -33,16 +40,16 @@ const ChatApp = forwardRef((props, ref) => {
             const botResponse = getResponse(text);
             setMessages((prev) => [
                 ...prev,
-                {sender:'bot', text: botResponse, name: 'Support'}
+                { sender: 'bot', text: botResponse, name: 'Support' }
             ]);
         }, 1500);
     };
 
     return (
         <div style={{
-            display: 'flex', 
-            flexDirection: 'column', 
-            height:'100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
             position: 'relative',
             overflow: 'hidden',
             margin: '-16px',
@@ -54,8 +61,8 @@ const ChatApp = forwardRef((props, ref) => {
                 top: 0,
                 left: 0,
                 right: 0,
-                background: '#0078ff', 
-                color:'#fff',
+                background: '#0078ff',
+                color: '#fff',
                 fontFamily: 'Poppins, sans-serif',
                 borderTopLeftRadius: '16px',
                 borderTopRightRadius: '16px',
@@ -64,8 +71,8 @@ const ChatApp = forwardRef((props, ref) => {
                 zIndex: 1
             }}>
                 <div style={{ padding: '0 24px' }}>
-                    <h3 style={{margin:0}}> Chat Support</h3>
-                    <p style={{margin:0, fontSize:'12px'}}>We are here to help</p>
+                    <h3 style={{ margin: 0 }}> Chat Support</h3>
+                    <p style={{ margin: 0, fontSize: '12px' }}>We are here to help</p>
                 </div>
             </div>
 
@@ -76,8 +83,8 @@ const ChatApp = forwardRef((props, ref) => {
                 backgroundColor: '#fff',
                 marginTop: '100px'
             }}>
-                {messages.map((msg,index)=>(
-                    <Message 
+                {messages.map((msg, index) => (
+                    <Message
                         key={index}
                         sender={msg.sender}
                         text={msg.text}
@@ -88,7 +95,7 @@ const ChatApp = forwardRef((props, ref) => {
                     <Message sender='bot' text={<TypingDots />} name='Support' />
                 )}
             </div>
-            <InputBox onSend={handleSend} userName={userName}/>
+            <InputBox onSend={handleSend} userName={userName} />
         </div>
     );
 });
