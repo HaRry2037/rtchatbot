@@ -1,8 +1,16 @@
 .popout-chat {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    width: min(90vw, 480px);
+    height: min(80vh, 700px);
     background: #ffffff;
+}
+
+@media (max-width: 520px) {
+    .popout-chat {
+        width: calc(100vw - 40px);
+        height: calc(100vh - 40px);
+    }
 }
 
 .popout-header {
@@ -16,6 +24,7 @@
 
 .popout-header h3 {
     margin: 0;
+    font-size: 1.2rem;
 }
 
 .close-button {
@@ -35,15 +44,19 @@
 
 .message {
     margin-bottom: 1rem;
+    width: auto;
     max-width: 80%;
+    word-wrap: break-word;
 }
 
 .message.user {
     margin-left: auto;
+    text-align: right;
 }
 
 .message.bot {
     margin-right: auto;
+    text-align: left;
 }
 
 .message-name {
@@ -70,4 +83,19 @@
     height: 100vh;
     font-size: 1.2rem;
     color: #666;
+}
+
+/* Optional: Mobile enhancement */
+@media (max-width: 600px) {
+    .popout-header h3 {
+        font-size: 1rem;
+    }
+
+    .popout-messages {
+        padding: 0.5rem;
+    }
+
+    .message-text {
+        font-size: 0.9rem;
+    }
 }

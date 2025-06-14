@@ -41,6 +41,7 @@
 .chat-content {
   flex: 1;
   overflow: hidden;
+  overflow-y: auto;
   margin-top: 10px;
 }
 

@@ -17,15 +17,13 @@ const BurgerMenu = ({ onPopout, onEndSession, messages }) => {
     const toggleSound = () => setSoundOn(!soundOn);
 
     const handlePopOutClick = () => {
-        const width = 400;
-        const height = 600;
-        const left = window.screen.width - width;
-        const top = window.screen.height - height;
+        const width = 100;
+        const height = 100;
 
         const newWindow = window.open(
             '/popout',
             'ChatWindow',
-            `width=${width},height=${height},left=${left},top=${top},resizable=yes`
+            `width=${width},height=${height},resizable=yes`
         );
 
         setPopOutWindow(newWindow);
