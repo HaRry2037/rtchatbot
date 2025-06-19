@@ -28,7 +28,7 @@ const handleEndSession = (callback = null) => {
     try {
         // Clear the chat history
         const historyCleaned = clearChatHistory();
-        
+
         // Reset active states
         const statesReset = resetActiveStates();
 

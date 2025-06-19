@@ -3,6 +3,8 @@ import './Popout.css';
 
 const Popout = () => {
     const [chatData, setChatData] = useState(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [soundOn, setSoundOn] = useState(true);
 
     useEffect(() => {
         const stored = localStorage.getItem('chatData');
@@ -10,16 +12,35 @@ const Popout = () => {
             setChatData(JSON.parse(stored));
         }
 
-        // Optional: fallback if storage is not yet set
         const handleMessage = (event) => {
-            if (event.data?.type === 'CHAT_DATA') {
-                setChatData(event.data.payload);
-                localStorage.setItem('chatData', JSON.stringify(event.data.payload));
+            if (event.origin === window.location.origin) {
+                if (event.data?.type === 'CHAT_DATA') {
+                    setChatData(event.data.payload);
+                    localStorage.setItem('chatData', JSON.stringify(event.data.payload));
+                } else if (event.data?.type === 'SOUND_STATE') {
+                    setSoundOn(event.data.payload);
+                }
             }
         };
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
     }, []);
+
+    const handleSoundToggle = () => {
+        const newSoundState = !soundOn;
+        setSoundOn(newSoundState);
+        window.opener?.postMessage({ type: 'TOGGLE_SOUND', payload: newSoundState }, window.location.origin);
+    };
+
+    const handleClosePopout = () => {
+        window.opener?.postMessage({ type: 'CLOSE_POPOUT' }, window.location.origin);
+        window.close();
+    };
+
+    const handleEndSession = () => {
+        window.opener?.postMessage({ type: 'END_SESSION' }, window.location.origin);
+        window.close();
+    };
 
     if (!chatData) {
         return <div className="loading">Loading chat...</div>;
@@ -29,9 +50,28 @@ const Popout = () => {
         <div className="popout-chat">
             <div className="popout-header">
                 <h3>Chat Support</h3>
-                <button className="close-button" onClick={() => window.close()}>
-                    ×
-                </button>
+                <div className="header-controls">
+                    <div
+                        className="burger-icon"
+                        onClick={() => setMenuOpen(!menuOpen)}
+                        title="Menu"
+                    >
+                        ☰
+                    </div>
+                    {menuOpen && (
+                        <div className="popout-menu">
+                            <button onClick={handleClosePopout}>
+                                Close Pop Out Window
+                            </button>
+                            <button onClick={handleSoundToggle}>
+                                Sound {soundOn ? 'On' : 'Off'}
+                            </button>
+                            <button onClick={handleEndSession}>
+                                Session End
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
             <div className="popout-messages">
                 {chatData.messages?.map((message, index) => (

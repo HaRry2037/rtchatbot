@@ -1,3 +1,9 @@
+.rating-wrapper {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+
 .rating-button-container {
     position: relative;
     width: 40px;
@@ -20,7 +26,7 @@
 
 .rating-tooltip {
     position: absolute;
-    top: -40px;
+    top: -45px;
     left: 50%;
     transform: translateX(-50%);
     background: #333;
@@ -42,33 +48,42 @@
 .rating-buttons {
     position: absolute;
     display: flex;
-    gap: 4px;
+    gap: 8px;
     transition: all 0.3s ease;
     opacity: 0;
     transform: translateX(-50%);
     left: 50%;
-    background: transparent;
     padding: 0;
-    border-radius: 20px;
-    box-shadow: none;
-    z-index: 1;
+    z-index: -1;
     width: 80px;
     justify-content: center;
+    pointer-events: none;
+    top: -55px;
 }
 
 .rating-buttons.visible {
     opacity: 1;
-    background: white;
     padding: 4px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     z-index: 1000;
+    pointer-events: auto;
 }
 
 .rating-single-button {
-    transform: scale(1);
-    transition: transform 0.3s ease;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.rating-buttons.visible .rating-single-button {
-    transform: scale(0.8);
-} 
+.rating-single-button:hover {
+    background: #f0f0f0;
+}
+
+.rating-single-button svg {
+    stroke: black;
+}
